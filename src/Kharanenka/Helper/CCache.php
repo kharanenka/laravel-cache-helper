@@ -77,6 +77,27 @@ class CCache {
     }
 
     /**
+     * Forever cache data
+     * @param array $arTags
+     * @param string $sKeys
+     * @param mixed $arValue
+     */
+    public static function forever($arTags, $sKeys, &$arValue) {
+
+        $sCacheDriver = config('cache.default');
+        if(!empty($arTags)) {
+            if($sCacheDriver == 'redis') {
+                Cache::tags($arTags)->forever($sKeys, $arValue);
+                return;
+            } else {
+                $sKeys = implode('_', $arTags).'_'.$sKeys;
+            }
+        }
+
+        Cache::forever($sKeys, $arValue);
+    }
+
+    /**
      * Clear cache data
      * @param array $arTags
      * @param string $sKeys
