@@ -20,6 +20,9 @@ class CCache
      */
     public static function get($arTags, $sKeys)
     {
+        $arTags = static::prepareCacheTags($arTags);
+        $sKeys = static::prepareCacheKey($sKeys);
+
         $sCacheDriver = config('cache.default');
         if(!empty($arTags)) {
             if($sCacheDriver == 'redis') {
@@ -40,6 +43,9 @@ class CCache
      */
     public static function has($arTags, $sKeys)
     {
+        $arTags = static::prepareCacheTags($arTags);
+        $sKeys = static::prepareCacheKey($sKeys);
+
         $sCacheDriver = config('cache.default');
         if(!empty($arTags)) {
             if($sCacheDriver == 'redis') {
@@ -61,6 +67,9 @@ class CCache
      */
     public static function put($arTags, $sKeys, &$arValue, $iMinute)
     {
+        $arTags = static::prepareCacheTags($arTags);
+        $sKeys = static::prepareCacheKey($sKeys);
+
         $obDate = Carbon::now()->addMinute($iMinute);
 
         $sCacheDriver = config('cache.default');
@@ -84,6 +93,9 @@ class CCache
      */
     public static function forever($arTags, $sKeys, &$arValue)
     {
+        $arTags = static::prepareCacheTags($arTags);
+        $sKeys = static::prepareCacheKey($sKeys);
+
         $sCacheDriver = config('cache.default');
         if(!empty($arTags)) {
             if($sCacheDriver == 'redis') {
@@ -104,6 +116,9 @@ class CCache
      */
     public static function clear($arTags, $sKeys = null)
     {
+        $arTags = static::prepareCacheTags($arTags);
+        $sKeys = static::prepareCacheKey($sKeys);
+
         $sCacheDriver = config('cache.default');
         if(!empty($arTags)) {
             if($sCacheDriver == 'redis') {
@@ -117,5 +132,31 @@ class CCache
                 Cache::forget($sKeys);
             }
         }
+    }
+
+    /**
+     * @param string $sKey
+     * @return array|mixed|string|string[]
+     */
+    protected static function prepareCacheKey(?string $sKey): ?string
+    {
+        if (empty($sKey)) {
+            return $sKey;
+        }
+
+        return str_replace('\\', '_', $sKey);
+    }
+
+    protected static function prepareCacheTags(?array $arTagList): ?array
+    {
+        if (empty($arTagList)) {
+            return $arTagList;
+        }
+
+        foreach ($arTagList as $iKey => $sTag) {
+            $arTagList[$iKey] = str_replace('\\', '_', $sTag);
+        }
+
+        return $arTagList;
     }
 }
