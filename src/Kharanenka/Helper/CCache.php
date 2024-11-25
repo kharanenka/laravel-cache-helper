@@ -144,7 +144,7 @@ class CCache
             return $sKey;
         }
 
-        return str_replace('\\', '_', $sKey);
+        return trim(str_replace('\\', '_', $sKey));
     }
 
     protected static function prepareCacheTags(?array $arTagList): ?array
@@ -154,7 +154,7 @@ class CCache
         }
 
         foreach ($arTagList as $iKey => $sTag) {
-            $arTagList[$iKey] = str_replace('\\', '_', $sTag);
+            $arTagList[$iKey] = trim(str_replace('\\', '_', $sTag));
         }
 
         return $arTagList;
